@@ -16,10 +16,14 @@ import argparse
 class ET312FirmwarePatcher(object):
 
     def __init__(self, input_hex, input_elf, output_hex):
+        import subprocess as sub
+
+        p = sub.Popen(['avr-objdump','-D',input_elf],stdout=sub.PIPE,stderr=sub.PIPE)
+        output,errors = p.communicate()
+        self.input_elf = output.split('\n')
+        
         with open(input_hex, "rb") as f:
             self.input_hex = bytearray(f.read())
-        with open(input_elf, "rb") as f:
-            self.input_elf = f.readlines()    
         self.output_hex_file = open(output_hex,"wb")
 
     def patch(self):
