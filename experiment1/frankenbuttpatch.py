@@ -11,6 +11,8 @@
 # so in that case replacing bytes at 0x438 with 0c 94 00 18
 # note the asm might go over multiple lines, stop at EOF or a blank line
 #
+# Might as well patch everything compiled using this script!
+#
 import argparse
 
 class ET312FirmwarePatcher(object):
@@ -44,12 +46,21 @@ class ET312FirmwarePatcher(object):
                     pass
                 for bytes in replacewith.split():
                     decbyte = int(bytes,16)
-                    print "Patch ",replacestart," with ",decbyte
+                    print "Patched %04x with %02x"%(replacestart,decbyte)
                     self.input_hex[replacestart] = decbyte
                     replacestart+=1
-
-        # do patchything here
-                
+            elif (':' in line):
+                try:
+                    location = int(line.split("\t")[0].rstrip(':'),16)
+                    hexbytes = line.split("\t")[1]
+                    for bytes in hexbytes.split():
+                        decbyte = int(bytes,16)
+                        self.input_hex[location] = decbyte
+                        print "Code %04x %02x"%(location,decbyte)
+                        location+=1
+                except:
+                    pass
+                  
         self.output_hex_file.write(bytearray(self.input_hex))
         return
         
