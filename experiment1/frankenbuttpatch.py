@@ -18,12 +18,30 @@ class ET312FirmwarePatcher(object):
     def __init__(self, input_hex, input_elf, output_hex):
         with open(input_hex, "rb") as f:
             self.input_hex = bytearray(f.read())
+        with open(input_elf, "rb") as f:
+            self.input_elf = f.readlines()    
         self.output_hex_file = open(output_hex,"wb")
 
     def patch(self):
-
-        # do thing here
+        import re
         
+        lines = iter(self.input_elf)
+        for line in lines:
+            replace = re.search('<replace_([^>]+)',line)
+            if replace:
+                replacestart = replace.group(1)
+                line = next(lines)
+                replacewith = ""
+                try:
+                    while (":" in line):
+                        replacewith += line.split("\t")[1]
+                        line = next(lines)
+                except StopIteration:
+                    pass
+                print "Patch ",replacestart," with ",replacewith
+
+        # do patchything here
+                
         self.output_hex_file.write(bytearray(self.input_hex))
         return
         
