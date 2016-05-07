@@ -17,8 +17,7 @@ dd if=hookmain.bin of=frankenbutt.bin skip=12288 seek=12288 bs=1
 dd if=/dev/zero of=frankenbutt.bin bs=1 count=0 seek=15872
 
 # find what function we want to hook and the new location
-avr-objdump -t hookmain.o | grep replace | sed  's/^\([0-9A-F]\+\).*replace_\([0-9a-f]\+\)/\2 0x\1/' | gawk --non-decimal-data '{printf "s/%s/0c94%02x%02x%s/g\n", $1, ($2-0x1800)%256,($2-0x1800)/256, substr($1,length($1)-2)}' > sed.txt
-xxd -ps -c256 frankenbutt.bin | sed -f sed.txt | xxd -ps -r > frankenbutt2.bin
+python ./frankenbuttpatch.py -i frankenbutt.bin -o frankenbutt2.bin -e hookmain.elf
 mv frankenbutt2.bin frankenbutt.bin
 
 # add checksum and convert ready to upload

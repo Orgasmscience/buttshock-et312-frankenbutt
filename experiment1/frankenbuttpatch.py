@@ -33,7 +33,7 @@ class ET312FirmwarePatcher(object):
         for line in lines:
             replace = re.search('<replace_([^>]+)',line)
             if replace:
-                replacestart = replace.group(1)
+                replacestart = int(replace.group(1),16)
                 line = next(lines)
                 replacewith = ""
                 try:
@@ -42,7 +42,11 @@ class ET312FirmwarePatcher(object):
                         line = next(lines)
                 except StopIteration:
                     pass
-                print "Patch ",replacestart," with ",replacewith
+                for bytes in replacewith.split():
+                    decbyte = int(bytes,16)
+                    print "Patch ",replacestart," with ",decbyte
+                    self.input_hex[replacestart] = decbyte
+                    replacestart+=1
 
         # do patchything here
                 

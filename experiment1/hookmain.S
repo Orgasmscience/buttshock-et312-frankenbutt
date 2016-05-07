@@ -6,8 +6,8 @@
 	#
 	
 	.org 0x3000
-	
-replace_e889e83218:
+
+loopmain:	
 	ldd r30, Y+19		; it's a counter!
 	andi r30 ,0x3f		; 
 	cpi r30, 0x06		; let's use it so we only run a few times a second
@@ -34,3 +34,6 @@ goback:
 omk:	jmp 0x444
 
 
+replace_0x438:
+	jmp loopmain
+	
