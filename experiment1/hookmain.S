@@ -34,6 +34,13 @@ goback:
 omk:	jmp 0x444
 
 
+	# hook a little counter into bottom right of screen as a demo
 replace_0x438:
 	jmp loopmain
+
+	# replace the V1.6 on startup screen with our own ID
+replace_0x1ce4:
+	.ascii "F001"
+
 	
+
