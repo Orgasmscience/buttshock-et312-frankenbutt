@@ -42,5 +42,14 @@ replace_0x438:
 replace_0x1ce4:
 	.ascii "F001"
 
+	# replace random xor key with 0 
+replace_0x18e0:
+	mov r26, 0
+
+	# allow serial protocol to dump all memory
+replace_0x1924:
+	mov r31, r27
+
 	
 
+	
