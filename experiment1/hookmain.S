@@ -40,11 +40,11 @@ replace_0x438:
 
 	# replace the V1.6 on startup screen with our own ID
 replace_0x1ce4:
-	.ascii "F001"
+	.ascii "F002"
 
 	# replace random xor key with 0 
 replace_0x18e0:
-	mov r26, 0
+	clr r26
 
 	# allow serial protocol to dump all memory
 replace_0x1924:
