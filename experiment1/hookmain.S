@@ -8,21 +8,21 @@
 	.org 0x3000
 
 loopmain:	
-	ldd r30, Y+19		; it's a counter!
-	andi r30 ,0x3f		; 
-	cpi r30, 0x06		; let's use it so we only run a few times a second
-	brne goback
+	ldd r30, Y+19		; 0x60+19 is an existing counter used by the ET to schedule running things
+	andi r30 ,0x3f		; we want to run a few times a second, so let's use 6 bits
+	cpi r30, 0x06		;
+	brne goback             ; not our time to run, so just go back to the main code
 
-	ldd r30, Y+15		; not used byte, just for our counter
+	ldd r30, Y+15		; 0x60+15 is a byte not used in the ET fw, let's use it for our counter
 	inc r30
 	std Y+15, r30
 	
 #	push r28
 #	ldi r28, 0xa5
-#	ldd r30, Y+0		;this is a counter
+#	ldd r30, Y+0		
 	ldi r31, 77	        ; bottom line, far right
 	call 0x12b8		; display_number_on_display:	Parameter r31 (position), r30 (number from 0-255) 
-	; 0x12b8 keeps r26, r27, trashes r0, r31, r30, 
+	; note 0x12b8 keeps r26, r27, trashes r0, r31, r30, 
 #	pop r28
 
 goback:	
@@ -33,7 +33,11 @@ goback:
 	jmp 0x43e
 omk:	jmp 0x444
 
-
+	# Stuff below is compiled but not patched into the binary, any routines starting
+	# with keyword "replace_" will cause our patch utility to add the compiled code
+	# to the location that follows.  i.e. "replace_0x300: nop" would write a 0 to
+	# 0x300 in the original firmware.
+	
 	# hook a little counter into bottom right of screen as a demo
 replace_0x438:
 	jmp loopmain
