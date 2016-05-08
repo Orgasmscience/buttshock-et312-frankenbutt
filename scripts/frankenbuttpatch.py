@@ -17,7 +17,7 @@ import argparse
 
 class ET312FirmwarePatcher(object):
 
-    def __init__(self, input_hex, input_elf, output_hex):
+    def __init__(self, input_hex, input_elf, output_hex, verbose=False):
         import subprocess as sub
 
         p = sub.Popen(['avr-objdump','-D',input_elf],stdout=sub.PIPE,stderr=sub.PIPE)
@@ -27,6 +27,7 @@ class ET312FirmwarePatcher(object):
         with open(input_hex, "rb") as f:
             self.input_hex = bytearray(f.read())
         self.output_hex_file = open(output_hex,"wb")
+        self.verbose = verbose
 
     def patch(self):
         import re
@@ -46,7 +47,8 @@ class ET312FirmwarePatcher(object):
                     pass
                 for bytes in replacewith.split():
                     decbyte = int(bytes,16)
-                    print "Patched %04x with %02x"%(replacestart,decbyte)
+                    if (self.verbose):
+                        print "Patched %04x with %02x"%(replacestart,decbyte)
                     self.input_hex[replacestart] = decbyte
                     replacestart+=1
             elif (':' in line):
@@ -56,7 +58,8 @@ class ET312FirmwarePatcher(object):
                     for bytes in hexbytes.split():
                         decbyte = int(bytes,16)
                         self.input_hex[location] = decbyte
-                        print "Code %04x %02x"%(location,decbyte)
+                        if (self.verbose):
+                            print "Code %04x %02x"%(location,decbyte)
                         location+=1
                 except:
                     pass
@@ -70,6 +73,7 @@ def main():
     parser.add_argument("-i", "--input", dest="input_hex_file", help="input hex file")
     parser.add_argument("-e", "--elffile", dest="input_elf_file", help="ELF file to parse for patches")
     parser.add_argument("-o", "--output", dest="output_hex_file", help="output hex file")
+    parser.add_argument("-v", "--verbose", dest="verbose", action='store_true', help="show what we patched")
     args=parser.parse_args()
 
     if not args.input_hex_file:
@@ -87,7 +91,7 @@ def main():
         parser.print_help()
         return 1
 
-    patcher = ET312FirmwarePatcher(args.input_hex_file,args.input_elf_file,args.output_hex_file)
+    patcher = ET312FirmwarePatcher(args.input_hex_file,args.input_elf_file,args.output_hex_file,args.verbose)
     patcher.patch();
     return 0
 
