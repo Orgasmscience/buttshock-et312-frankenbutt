@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python
 #
 # take an elf file and run  avr-objdump -D filename on it
 # parse the results
@@ -48,7 +48,7 @@ class ET312FirmwarePatcher(object):
                 for bytes in replacewith.split():
                     decbyte = int(bytes,16)
                     if (self.verbose):
-                        print "Patched %04x with %02x"%(replacestart,decbyte)
+                        print ("Patched %04x with %02x"%(replacestart,decbyte))
                     self.input_hex[replacestart] = decbyte
                     replacestart+=1
             elif (':' in line):
@@ -59,7 +59,7 @@ class ET312FirmwarePatcher(object):
                         decbyte = int(bytes,16)
                         self.input_hex[location] = decbyte
                         if (self.verbose):
-                            print "Code %04x %02x"%(location,decbyte)
+                            print ("Code %04x %02x"%(location,decbyte))
                         location+=1
                 except:
                     pass
