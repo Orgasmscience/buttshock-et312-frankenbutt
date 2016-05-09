@@ -7,7 +7,7 @@
 	
 	.org 0x3000
 
-loopmain:	
+hookloopmain:	
 	ldd r30, Y+19		; 0x60+19 is an existing counter used by the ET to schedule running things
 	andi r30 ,0x3f		; we want to run a few times a second, so let's use 6 bits
 	cpi r30, 0x06		;
@@ -40,19 +40,8 @@ omk:	jmp 0x444
 	
 	# hook a little counter into bottom right of screen as a demo
 replace_0x438:
-	jmp loopmain
+	jmp hookloopmain
 
-	# replace the V1.6 on startup screen with our own ID
-replace_0x1ce4:
-	.ascii "F002"
-
-	# replace random xor key with 0 
-replace_0x18e0:
-	clr r26
-
-	# allow serial protocol to dump all memory
-replace_0x1924:
-	mov r31, r27
 
 	
 
