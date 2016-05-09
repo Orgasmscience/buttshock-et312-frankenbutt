@@ -13,17 +13,17 @@ hookloopmain:
 	cpi r30, 0x06		;
 	brne goback             ; not our time to run, so just go back to the main code
 
+	ldd r30, Y+13		; $406D is "Menu State" 1 when in menu, 2 when running a program
+	cpi r30, 0x02		; don't do anything when in a menu
+	brne goback
+	
 	ldd r30, Y+15		; 0x60+15 is a byte not used in the ET fw, let's use it for our counter
 	inc r30
 	std Y+15, r30
 	
-#	push r28
-#	ldi r28, 0xa5
-#	ldd r30, Y+0		
 	ldi r31, 77	        ; bottom line, far right
 	call 0x12b8		; display_number_on_display:	Parameter r31 (position), r30 (number from 0-255) 
 	; note 0x12b8 keeps r26, r27, trashes r0, r31, r30, 
-#	pop r28
 
 goback:	
 	; stuff we overwrote that we have to do here now
