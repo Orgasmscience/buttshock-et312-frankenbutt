@@ -1,7 +1,6 @@
 SOURCES=15bootloader.S changeversion.S removerandomxor.S serialdumpmemory.S
 
-FRANKENBUTTPATCH=python ../scripts/frankenbuttpatch.py
-FWUTILS=python3 ../../buttshock-et312-firmware/scripts/fw-utils.py 
+FWUTILS=python3 ../../buttshock-et312-firmware/scripts/fw-utils.py
 
 OBJECTS=$(SOURCES:.S=.o)
 ASFLAGS=-mmcu=atmega16
@@ -14,7 +13,7 @@ f002.fwpatch: f002.elf
 
 f002: f002.fwpatch
 # patch the firmware based on our asm and patches
-	$(FRANKENBUTTPATCH) -i ../../buttshock-et312-firmware/firmware/312-16-decrypted.bin -o f002.bin -p f002.fwpatch
+	$(FWUTILS) -i ../../buttshock-et312-firmware/firmware/312-16-decrypted.bin -o f002.bin -p f002.fwpatch
 # add checksum and convert ready to upload
 	$(FWUTILS) -i f002.bin -e -o f002.upg
 
