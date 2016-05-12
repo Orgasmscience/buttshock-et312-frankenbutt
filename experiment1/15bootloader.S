@@ -37,8 +37,6 @@ Label_0x1484:
 Label_0x1492:
 	jmp 0x1492
 	
-
-	# hook a little counter into bottom right of screen as a demo
 replace_0x1460:
 	jmp stuffthatwasat1460
 
