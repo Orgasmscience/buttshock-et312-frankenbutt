@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #
 # take an elf file and run  avr-objdump -D filename on it
-# parse the results
+# parse the results as a patch file
 #
 # 00003022 <replace_0x438>:
 #   3022:       0c 94 00 18     jmp     0x3000  ; 0x3000 <loopmain>
@@ -17,13 +17,11 @@ import argparse
 
 class ET312FirmwarePatcher(object):
 
-    def __init__(self, input_hex, input_elf, output_hex, verbose=False):
-        import subprocess as sub
+    def __init__(self, input_hex, input_patch, output_hex, verbose=False):
 
-        p = sub.Popen(['avr-objdump','-D',input_elf],stdout=sub.PIPE,stderr=sub.PIPE)
-        output,errors = p.communicate()
-        self.input_elf = output.split('\n')
-        
+        with open(input_patch,"r") as f:
+            self.input_patch = f.read().splitlines()
+            
         with open(input_hex, "rb") as f:
             self.input_hex = bytearray(f.read())
         self.output_hex_file = open(output_hex,"wb")
@@ -32,7 +30,7 @@ class ET312FirmwarePatcher(object):
     def patch(self):
         import re
         
-        lines = iter(self.input_elf)
+        lines = iter(self.input_patch)
         for line in lines:
             replace = re.search('<replace_([^>]+)',line)
             if replace:
@@ -71,7 +69,7 @@ class ET312FirmwarePatcher(object):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", dest="input_hex_file", help="input hex file")
-    parser.add_argument("-e", "--elffile", dest="input_elf_file", help="ELF file to parse for patches")
+    parser.add_argument("-p", "--patchfile", dest="input_patch_file", help="patch file created by avr-objdump -D your-elf-file")
     parser.add_argument("-o", "--output", dest="output_hex_file", help="output hex file")
     parser.add_argument("-v", "--verbose", dest="verbose", action='store_true', help="show what we patched")
     args=parser.parse_args()
@@ -81,8 +79,8 @@ def main():
         parser.print_help()
         return 1
 
-    if not args.input_elf_file:
-        print("ERROR: Input elf file required to run.")
+    if not args.input_patch_file:
+        print("ERROR: Input patch file required to run.")
         parser.print_help()
         return 1
 
@@ -91,7 +89,7 @@ def main():
         parser.print_help()
         return 1
 
-    patcher = ET312FirmwarePatcher(args.input_hex_file,args.input_elf_file,args.output_hex_file,args.verbose)
+    patcher = ET312FirmwarePatcher(args.input_hex_file,args.input_patch_file,args.output_hex_file,args.verbose)
     patcher.patch();
     return 0
 
