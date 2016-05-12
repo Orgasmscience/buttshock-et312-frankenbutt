@@ -1,0 +1,54 @@
+
+f002.elf:     file format elf32-avr
+
+
+Disassembly of section .text:
+
+00000000 <__ctors_end>:
+	...
+
+00003000 <stuffthatwasat1460>:
+    3000:	a0 31       	cpi	r26, 0x10	; 16
+    3002:	58 f4       	brcc	.+22     	; 0x301a <Label_0x1476>
+    3004:	b3 95       	inc	r27
+    3006:	b0 34       	cpi	r27, 0x40	; 64
+    3008:	90 f4       	brcc	.+36     	; 0x302e <Label_0x1492>
+    300a:	00 30       	cpi	r16, 0x00	; 0
+    300c:	19 f4       	brne	.+6      	; 0x3014 <Label_0x1472>
+    300e:	bb 87       	std	Y+11, r27	; 0x0b
+    3010:	0c 94 19 0a 	jmp	0x1432	; 0x1432 <__ctors_end+0x1432>
+
+00003014 <Label_0x1472>:
+    3014:	bc 87       	std	Y+12, r27	; 0x0c
+    3016:	0c 94 19 0a 	jmp	0x1432	; 0x1432 <__ctors_end+0x1432>
+
+0000301a <Label_0x1476>:
+    301a:	b0 30       	cpi	r27, 0x00	; 0
+    301c:	41 f0       	breq	.+16     	; 0x302e <Label_0x1492>
+    301e:	00 30       	cpi	r16, 0x00	; 0
+    3020:	21 f4       	brne	.+8      	; 0x302a <Label_0x1484>
+    3022:	01 e0       	ldi	r16, 0x01	; 1
+    3024:	bb 27       	eor	r27, r27
+    3026:	0c 94 0b 0a 	jmp	0x1416	; 0x1416 <__ctors_end+0x1416>
+
+0000302a <Label_0x1484>:
+    302a:	0c 94 42 0a 	jmp	0x1484	; 0x1484 <__ctors_end+0x1484>
+
+0000302e <Label_0x1492>:
+    302e:	0c 94 49 0a 	jmp	0x1492	; 0x1492 <__ctors_end+0x1492>
+
+00003032 <replace_0x1460>:
+    3032:	0c 94 00 18 	jmp	0x3000	; 0x3000 <stuffthatwasat1460>
+
+00003036 <replace_0x1476>:
+    3036:	0c 94 53 0a 	jmp	0x14a6	; 0x14a6 <__ctors_end+0x14a6>
+
+0000303a <replace_0x1ce4>:
+    303a:	46 30       	cpi	r20, 0x06	; 6
+    303c:	30 32       	cpi	r19, 0x20	; 32
+
+0000303e <replace_0x18e0>:
+    303e:	aa 27       	eor	r26, r26
+
+00003040 <replace_0x1924>:
+    3040:	fb 2f       	mov	r31, r27
