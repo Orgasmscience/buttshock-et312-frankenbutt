@@ -41,7 +41,7 @@ got_menu_option_0b:
 	std Y+25, r26		; Menu Min
 	std Y+24, r26		; Menu Current
 	call 0x12ec		; show_text_on_display
-	ldi r21, 4
+	ldi r21, 10
 	ldi r18, 8		; previous
 	ldi r20, 9		; next
 	ldi r22, 3
@@ -103,6 +103,6 @@ replace_0x8f8:
 	jmp got_menu_option_0b
 
 replace_0x1d78:
-	.ascii "More Options    "
+	.ascii "More Options?   "
 
 	
