@@ -77,10 +77,10 @@ not_0x20:
 	ldi r26, 4		; "Press any key"
 	call 0x12dc		; show_text_on_display2
 	
-	ldi r22, 0
-	ldi r19, 0
-	ldi r20, 0
-	ldi r21, 0
+	ldi r22, 4
+	ldi r19, 4
+	ldi r20, 4
+	ldi r21, 4
 	jmp 0x966
 
 not_0x21:

@@ -100,10 +100,10 @@ Disassembly of section .text:
     309c:	0e 94 76 09 	call	0x12ec	; 0x12ec <__ctors_end+0x12ec>
     30a0:	a4 e0       	ldi	r26, 0x04	; 4
     30a2:	0e 94 6e 09 	call	0x12dc	; 0x12dc <__ctors_end+0x12dc>
-    30a6:	60 e0       	ldi	r22, 0x00	; 0
-    30a8:	30 e0       	ldi	r19, 0x00	; 0
-    30aa:	40 e0       	ldi	r20, 0x00	; 0
-    30ac:	50 e0       	ldi	r21, 0x00	; 0
+    30a6:	64 e0       	ldi	r22, 0x04	; 4
+    30a8:	34 e0       	ldi	r19, 0x04	; 4
+    30aa:	44 e0       	ldi	r20, 0x04	; 4
+    30ac:	54 e0       	ldi	r21, 0x04	; 4
     30ae:	0c 94 b3 04 	jmp	0x966	; 0x966 <__ctors_end+0x966>
 
 000030b2 <not_0x21>:
