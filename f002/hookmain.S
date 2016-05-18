@@ -8,15 +8,19 @@
 	.org 0x3000
 
 hookloopmain:	
-	ldd r30, Y+19		; 0x60+19 is an existing counter used by the ET to schedule running things
-	andi r30 ,0x3f		; we want to run a few times a second, so let's use 6 bits
+	ldd r30, Y+14		; 0x60+14 is a byte not used, use it for bit0-debug-enabled
+	sbrs r30, 0		; skipif(bit(r30,0))
+	jmp goback
+	
+	ldd r30, Y+19		; 0x60+19 is an existing counter used by the ET at 488Hz
+	andi r30 ,0x7f		; we want to run a few times a second, so let's use 7 bits (3.8Hz)
 	cpi r30, 0x06		;
 	brne goback             ; not our time to run, so just go back to the main code
 
 	ldd r30, Y+13		; $406D is "Menu State" 1 when in menu, 2 when running a program
 	cpi r30, 0x02		; don't do anything when in a menu
 	brne goback
-	
+
 	ldd r30, Y+15		; 0x60+15 is a byte not used in the ET fw, let's use it for our counter
 	inc r30
 	std Y+15, r30
