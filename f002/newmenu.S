@@ -1,5 +1,3 @@
-	.org 0x3000
-
 	# Let's replace the Link Slave Unit? menu option with a "More Options" menu!
 	# and that menu has a "Link Slave Unit?" and a "Debug Mode?" options
 	
@@ -37,9 +35,9 @@ loop0: 				; r27:r26=r26*(2^4)
 got_menu_option_0b:
 	ldi r26, 0x21
 	std Y+26, r26		; Menu Max
+	std Y+24, r26		; Menu Current (start at 0x21)
 	ldi r26, 0x20
 	std Y+25, r26		; Menu Min
-	std Y+24, r26		; Menu Current
 	call 0x12ec		; show_text_on_display
 	ldi r21, 10
 	ldi r18, 8		; previous
@@ -64,8 +62,15 @@ not_0xd:
 not_0x20:
 	cpi r26, 0x21
 	brne not_0x21
-				; 0x21 display a message
+				; 0x21 toggle debug mode
+	ldi r26, 1
+	ldd r27, Y+14		; debug mode if bit 0 set
+	eor r27, r26
+	std Y+14, r27		; toggle bit0
+	andi r27 , 1
+	
 	ldi r26, 0x22
+	add r26, r27
 	call 0x12ec		; show_text_on_display
 	ldi r26, 4
 	call 0x12dc		; show_text_on_display2
@@ -79,14 +84,15 @@ not_0x20:
 not_0x21:
 	jmp 0x94a		; back to check it's it's 0e...
 
-
 	
 string_0x20:
 	.ascii "Link Slave Unit?"
 string_0x21:	
 	.ascii "Debug Mode?     "
 string_0x22:	
-	.ascii "Debug Enabled   "	
+	.ascii "Debug Disabled  "	
+string_0x23:	
+	.ascii "Debug Enabled   "
 	
 	# Stuff below is compiled but not patched into the binary, any routines starting
 	# with keyword "replace_" will cause our patch utility to add the compiled code
