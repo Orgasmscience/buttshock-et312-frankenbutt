@@ -31,8 +31,10 @@ f002 is an example which
 
 - changes the box xor byte to 0 instead of random
 - allows serial connections to read more memory locations
-- adds a counter in the bottom right of the LCD that just increments
-- moves the reset code out of the way of the 1.5 bootloader jump
+- adds a new sub-menu "More Options" and moves serial link to that menu
+- adds a menu item "Debug Mode" to the new sub-menu
+- adds a counter in the bottom right of the LCD that just increments when debug mode is enabled
+[- moves the reset code out of the way of the 1.5 bootloader jump]
 
 ## FAQ
 
