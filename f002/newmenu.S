@@ -45,24 +45,26 @@ got_menu_option_0b:
 	ldi r22, 3
 	ret
 
+				; Now we patch the part that looks at which menu option was selected
+				; so we can add our new options
+	
 add_new_menu_options:
 	; replace overwritten stuff from 93e
-	cpi r26, 0x0d
-	brne not_0xd
+	cpi r26, 0x0d		;  93e:   ad 30           cmp(r26, 0x0d);                     ; 13
+	brne not_0xd            ;  940:   21 f4           if (c1 != c2) goto Label_0x94a;
 	jmp 0x942		; was option 0d - reset settings
 
 not_0xd:
 	cpi r26, 0x20
 	brne not_0x20
-				; 0x20 so link box!
-	ldi r26, 14		; replaced 8f8
-	call 0x1a06		; replaced write_r26_to_com_buffer();
-	jmp 0x8fe		; back to where we were
+				; 0x20 so link box! replace stuff we overwrote from 8f8
+	ldi r26, 14		; 8f8:   ae e0           r26 = 14;                           ; 0x0e
+	call 0x1a06		; 8fa:   0e 94 03 0d     write_r26_to_com_buffer();          ; Parameters r26
+	jmp 0x8fe		; back to where we were, continue with the link box command
 
 not_0x20:
-	cpi r26, 0x21
-	brne not_0x21
-				; 0x21 toggle debug mode
+	cpi r26, 0x21		
+	brne not_0x21		; 0x21 "toggle debug mode"
 	ldi r26, 1
 	ldd r27, Y+14		; debug mode if bit 0 set
 	eor r27, r26
@@ -70,9 +72,9 @@ not_0x20:
 	andi r27 , 1
 	
 	ldi r26, 0x22
-	add r26, r27
+	add r26, r27		; display 0x22 (debug now off) or 0x23 (debug now on)
 	call 0x12ec		; show_text_on_display
-	ldi r26, 4
+	ldi r26, 4		; "Press any key"
 	call 0x12dc		; show_text_on_display2
 	
 	ldi r22, 0
