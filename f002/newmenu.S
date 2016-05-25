@@ -33,7 +33,7 @@ loop0: 				; r27:r26=r26*(2^4)
 	# If they selected menu_option_0e, take them to the new menu
 	
 got_menu_option_0b:
-	ldi r26, 0x21
+	ldi r26, 0x22
 	std Y+26, r26		; Menu Max
 	std Y+24, r26		; Menu Current (start at 0x21)
 	ldi r26, 0x20
@@ -71,8 +71,8 @@ not_0x20:
 	std Y+14, r27		; toggle bit0
 	andi r27 , 1
 	
-	ldi r26, 0x22
-	add r26, r27		; display 0x22 (debug now off) or 0x23 (debug now on)
+	ldi r26, 0x23
+	add r26, r27		; display 0x23 (debug now off) or 0x24 (debug now on)
 	call 0x12ec		; show_text_on_display
 	ldi r26, 4		; "Press any key"
 	call 0x12dc		; show_text_on_display2
@@ -84,6 +84,15 @@ not_0x20:
 	jmp 0x966
 
 not_0x21:
+	cpi r26, 0x22
+	brne not_0x22
+	ldi r26, 2
+	ldd r27, Y+14		; fred rand1 mode if bit 1 set
+	eor r27, r26
+	std Y+14, r27
+	jmp 0xa1c		; CallTable_4_Exit_Menu 
+
+not_0x22:	
 	jmp 0x94a		; back to check it's it's 0e...
 
 	
@@ -92,8 +101,10 @@ string_0x20:
 string_0x21:	
 	.ascii "Debug Mode?     "
 string_0x22:	
-	.ascii "Debug Disabled  "	
+	.ascii "Fred-Rand1 Mode?"
 string_0x23:	
+	.ascii "Debug Disabled  "	
+string_0x24:	
 	.ascii "Debug Enabled   "
 	
 	# Stuff below is compiled but not patched into the binary, any routines starting
