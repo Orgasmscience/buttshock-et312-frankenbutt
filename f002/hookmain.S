@@ -91,7 +91,7 @@ is_zero:			; pick a time, pick a mode, change to the mode, store the mode
 	std Y+27, r26
 	ldi r30, 0x4
 	call run_call_table
-	ldi r30, 0x10
+	ldi r30, 0x10		; change mode (restarts routine timer)
 	call run_call_table
 
 	ldi r26, rand3_time_on_min
@@ -104,15 +104,14 @@ is_zero:			; pick a time, pick a mode, change to the mode, store the mode
 	jmp rand3_done
 
 check_time:
-	ldd r30, Y+41	; r2 = Memory[[r28:r29]+0x29]; routine timer 0.953Hz
-	ldd r31, Y+21 ; r26 = r26 = Memory[[r28:r29]+21]; time to change mode
+	ldd r30, Y+41 ; Memory[[r28:r29]+41]; routine timer 0.953Hz
+	ldd r31, Y+21 ; Memory[[r28:r29]+21]; time to change mode
 	cp r31, r30
 	brne rand3_done
 	cpi r26, 0xff
 	breq rand3_end_of_mute
 
-	; set mode to ff, turn off, set timer
-	ldi r26, 0xff
+	ldi r26, 0xff		; set mode to ff, turn off, set timer
 	std Y+15, r26
 
 	ldi r26, rand3_time_off_min
@@ -122,7 +121,7 @@ check_time:
 	call r26_is_random_number_between_0x8d_0x8e
 
 	std Y+21, r30   ; store it
-	ldi r30, 0x18
+	ldi r30, 0x18	; start a new routine with no output (restarts routine timer)
 	call run_call_table
 
 	ldi r26, 0x64
@@ -136,11 +135,15 @@ rand3_end_of_mute:
 #	jmp rand3_done		
 
 rand3_done:
+	ldd r30, Y+13		; $406D is "Menu State" 1 when in menu, 2 when running a program
+	cpi r30, 0x02		; don't do anything when in a menu, otherwise display our status msg
+	brne goback
+
 	ldi r26, 0x20
 	call show_text_on_display2
-	;; now we use routine timer we're always ahead of it
-	ldd r31, Y+41	; r2 = Memory[[r28:r29]+0x29]; routine timer 0.953Hz
-	ldd r30, Y+21   ; r26 = r26 = Memory[[r28:r29]+21]; time to change mode
+
+	ldd r31, Y+41	; Memory[[r28:r29]+41]; routine timer 0.953Hz
+	ldd r30, Y+21   ; Memory[[r28:r29]+21]; time to change mode
 	sub r30, r31
 
 	ldi r31, 77		; bottom line, farright
