@@ -34,6 +34,10 @@ f002 is an example which
 - adds a new sub-menu "More Options" and moves serial link to that menu
 - adds a menu item "Debug Mode" to the new sub-menu
 - adds a counter in the bottom right of the LCD that just increments when debug mode is enabled
+- adds a menu item "Random3" to the new sub-menu
+  Random3 mode turns on a favourite mode for a random time, then turns off the outputs for
+  another random time, repeating this.  A bit like Random1 but without the random MA knob
+  and with random periods with no stimulation
 [- moves the reset code out of the way of the 1.5 bootloader jump]
 
 ## FAQ
