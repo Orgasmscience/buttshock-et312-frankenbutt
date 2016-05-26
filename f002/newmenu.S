@@ -35,8 +35,8 @@ loop0: 				; r27:r26=r26*(2^4)
 got_menu_option_0b:
 	ldi r26, 0x22
 	std Y+26, r26		; Menu Max
-	std Y+24, r26		; Menu Current (start at 0x21)
 	ldi r26, 0x20
+	std Y+24, r26		; Menu Current (start at 0x20)
 	std Y+25, r26		; Menu Min
 	call 0x12ec		; show_text_on_display
 	ldi r21, 10
@@ -55,14 +55,14 @@ add_new_menu_options:
 	jmp 0x942		; was option 0d - reset settings
 
 not_0xd:
-	cpi r26, 0x20
-	brne not_0x20
-				; 0x20 so link box! replace stuff we overwrote from 8f8
+	cpi r26, 0x22
+	brne not_0x22
+				; 0x22 so link box! replace stuff we overwrote from 8f8
 	ldi r26, 14		; 8f8:   ae e0           r26 = 14;                           ; 0x0e
 	call 0x1a06		; 8fa:   0e 94 03 0d     write_r26_to_com_buffer();          ; Parameters r26
 	jmp 0x8fe		; back to where we were, continue with the link box command
 
-not_0x20:
+not_0x22:
 	cpi r26, 0x21		
 	brne not_0x21		; 0x21 "toggle debug mode"
 	ldi r26, 1
@@ -84,24 +84,24 @@ not_0x20:
 	jmp 0x966
 
 not_0x21:
-	cpi r26, 0x22
-	brne not_0x22
+	cpi r26, 0x20
+	brne not_0x20
 	ldi r26, 2
-	ldd r27, Y+14		; fred rand1 mode if bit 1 set
+	ldd r27, Y+14		; Rand3 mode if bit 1 set
 	eor r27, r26
 	std Y+14, r27
 	jmp 0xa1c		; CallTable_4_Exit_Menu 
 
-not_0x22:	
+not_0x20:	
 	jmp 0x94a		; back to check it's it's 0e...
 
 	
-string_0x20:
-	.ascii "Link Slave Unit?"
+string_0x20:	
+	.ascii "Random3 Mode ?  "
 string_0x21:	
 	.ascii "Debug Mode?     "
-string_0x22:	
-	.ascii "Fred-Rand1 Mode?"
+string_0x22:
+	.ascii "Link Slave Unit?"
 string_0x23:	
 	.ascii "Debug Disabled  "	
 string_0x24:	

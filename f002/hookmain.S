@@ -9,7 +9,18 @@
 
 	# we can overwrite r30, r31, r26
 
-fave_modes:
+	show_text_on_display = 0x12ec
+	show_text_on_display2 = 0x12dc
+	display_number_on_display = 0x12b8
+	r26_is_random_number_between_0x8d_0x8e = 0xb58
+	run_call_table = 0x790	
+
+	rand3_time_on_min = 30
+	rand3_time_on_max = 240
+	rand3_time_off_min = 5
+	rand3_time_off_max = 120
+	
+fave_modes:			; you have to have an even number or compiler will complain
 	.byte 0x76, 0x77, 0x7b, 0x78, 0x83, 0x86, 0x81, 0x86, 0x81, 0x77, 0x86, 0x86
 	# ETMODE_waves, ETMODE_stroke, ETMODE_rhythm, ETMODE_climb, ETMODE_orgasm, ETMODE_phase2, ETMODE_random2, ETMODE_phase2, ETMODE
 	# _random2, ETMODE_stroke,ETMODE_phase2
@@ -24,24 +35,23 @@ hookloopmain:
 	sbrc r30, 0		; skipif(!bit(r30,0))
 	call display_debug_counter
 	sbrc r30, 1		; skipif(!bit(r30,1))
-	call rand1_mode
+	call rand3_mode
 nothingtodo:	
 	jmp goback
 
 display_debug_counter:	
 	ldd r30, Y+13		; $406D is "Menu State" 1 when in menu, 2 when running a program
 	cpi r30, 0x02		; don't do anything when in a menu
-	breq ok1
+	breq not_in_menu
 	jmp goback
 
-ok1:	
+not_in_menu:	
 	ldd r30, Y+15		; 0x60+15 is a byte not used in the ET fw, let's use it for our counter
 	inc r30
 	std Y+15, r30
 	
 	ldi r31, 77	        ; bottom line, far right
-	call 0x12b8		; display_number_on_display:	Parameter r31 (position), r30 (number from 0-255) 
-	; note 0x12b8 keeps r26, r27, trashes r0, r31, r30, 
+	call display_number_on_display		; parameter r31 (position), r30 (number from 0-255) 
 	ret
 
 	# Our new rand1 mode is different to modes available on the box
@@ -57,89 +67,84 @@ ok1:
 	# else if time reached and mode == ff then set to 0
 	# a few times a second display "Countdown xx"
 
-rand1_mode:
-	ldd r26, Y+15	; our special memory location for current mode
-	cpi r26, 0	; is it a 0?
+rand3_mode:
+	ldd r26, Y+15		; our special memory location for current mode
+	cpi r26, 0		; is it a 0?
 	breq is_zero
-	jmp check_time				; pick a time, pick a mode, change to the mode, store the mode
-is_zero:	
+	jmp check_time		
+is_zero:			; pick a time, pick a mode, change to the mode, store the mode
 	ldi r26, 0		; mode temp
 	std Y+45, r26
 	ldi r26, 10
 	std Y+46, r26
-	call 0xb58	; r26_is_random_between_mem0x8D_and_mem0x8E:
+	call r26_is_random_number_between_0x8d_0x8e
 	ldi r30, lo8(fave_modes)
 	ldi r31, hi8(fave_modes)
 	add r30, r26 		; no carry
-	adc r31, r29		; +0 with carry we'll just assume it's in first 256 oh no!
-	lpm r26, Z			; r0 = flash[r30:r31]
+	adc r31, r29		; +0 with carry
+	lpm r26, Z		; r0 = flash[r30:r31]
 	dec r26
 	
 	std Y+15, r26
-	#	call 0x604;  Function 0x604
+	#	call 0x604;  Function 0x604 changes mode without changing display
 
 	std Y+27, r26
 	ldi r30, 0x4
-	call 0x790 		; run_call_table
+	call run_call_table
 	ldi r30, 0x10
-	call 0x790 		; run_call_table
+	call run_call_table
 
-	ldi r26, 30
+	ldi r26, rand3_time_on_min
 	std Y+45, r26
-	ldi r26, 240	; 30-240 ~seconds
+	ldi r26, rand3_time_on_max
 	std Y+46, r26
-	call 0xb58	; r26_is_random_between_mem0x8D_and_mem0x8E:	
-#	ldd r30, Y+41	; routine timer current
-#	add r30, r26
-#	std Y+21, r30   ; store it
+	call r26_is_random_number_between_0x8d_0x8e
 	std Y+21, r26   ; store it
 	
-	jmp rand1_done
+	jmp rand3_done
 
 check_time:
 	ldd r30, Y+41	; r2 = Memory[[r28:r29]+0x29]; routine timer 0.953Hz
 	ldd r31, Y+21 ; r26 = r26 = Memory[[r28:r29]+21]; time to change mode
 	cp r31, r30
-	brne rand1_done
+	brne rand3_done
 	cpi r26, 0xff
-	breq rand1_end_of_mute
+	breq rand3_end_of_mute
 
 	; set mode to ff, turn off, set timer
 	ldi r26, 0xff
 	std Y+15, r26
 
-	ldi r26, 5
+	ldi r26, rand3_time_off_min
 	std Y+45, r26
-	ldi r26, 120	; 5-120 ~seconds
+	ldi r26, rand3_time_off_max
 	std Y+46, r26
-	call 0xb58	; r26_is_random_between_mem0x8D_and_mem0x8E:
-#	ldd r30, Y+41	; routine timer current -- always starts from 0!
-#	add r30, r26
+	call r26_is_random_number_between_0x8d_0x8e
+
 	std Y+21, r30   ; store it
 	ldi r30, 0x18
-	call 0x790 		; run_call_table
+	call run_call_table
 
 	ldi r26, 0x64
-	call 0x12ec		; spaces over mode probably
+	call show_text_on_display ; 8 spaces on RHS top line
 	
-	rjmp rand1_done
+	rjmp rand3_done
 
-rand1_end_of_mute:
+rand3_end_of_mute:
 	ldi r31, 0
 	std Y+15, r31
-	jmp rand1_done
+#	jmp rand3_done		
 
-rand1_done:
+rand3_done:
+	ldi r26, 0x20
+	call show_text_on_display2
+	;; now we use routine timer we're always ahead of it
 	ldd r31, Y+41	; r2 = Memory[[r28:r29]+0x29]; routine timer 0.953Hz
 	ldd r30, Y+21   ; r26 = r26 = Memory[[r28:r29]+21]; time to change mode
-	sbc r30, r31
-	brcc n1
-	neg r30
-n1:
-	ldi r26, 0x22
-	call 0x12dc		; show_text_on_display2
+	sub r30, r31
+
 	ldi r31, 77		; bottom line, farright
-	call 0x12b8		; display number on display
+	call display_number_on_display
 
 	ret
 	
