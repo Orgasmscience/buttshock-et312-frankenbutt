@@ -1,4 +1,4 @@
-SOURCES=hookmain.S newmenu.S changeversion.S removerandomxor.S serialdumpmemory.S 
+SOURCES=hookmain.S newmenu.S changeversion.S removerandomxor.S serialdumpmemory.S fixknobscaling.S
 
 FWUTILS=python3 ../../buttshock-et312-firmware/scripts/fw-utils.py
 
