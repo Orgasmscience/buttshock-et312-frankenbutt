@@ -69,6 +69,26 @@ newbox:
 replace_0x150e:
 	jmp new_init_0x150e
 
+	# We measure the fet leakage and older boxes start differently....
+
+replace_0x1410:
+	jmp measure_fet
+
+measure_fet:
+	ldi r26, 100
+	lds r30, 0x4ff
+	cpi r30, 15
+	breq fet_old_box
+set_fet:	
+	std Y+4, r26		; 1412:   ac 83           Memory[[r28:r29]+4] = r26;
+	std Y+5, r26		; 1414:   ad 83           Memory[[r28:r29]+5] = r26;
+	jmp 0x1416
+
+fet_old_box:
+	lds r26, 83
+	rjmp set_fet
+
+	
 	# Replace the SPI transfer complete with a jump to our new code
 	
 replace_0x28:

@@ -58,75 +58,93 @@ Disassembly of section .text:
 00003052 <replace_0x150e>:
     3052:	0c 94 20 18 	jmp	0x3040	; 0x3040 <new_init_0x150e>
 
-00003056 <replace_0x28>:
-    3056:	0c 94 2d 18 	jmp	0x305a	; 0x305a <replacement_spi_transfer_complete>
+00003056 <replace_0x1410>:
+    3056:	0c 94 2d 18 	jmp	0x305a	; 0x305a <measure_fet>
 
-0000305a <replacement_spi_transfer_complete>:
-    305a:	70 91 ff 04 	lds	r23, 0x04FF
-    305e:	7f 30       	cpi	r23, 0x0F	; 15
-    3060:	11 f0       	breq	.+4      	; 0x3066 <oldbox>
-    3062:	0c 94 7c 08 	jmp	0x10f8	; 0x10f8 <__ctors_end+0x10f8>
+0000305a <measure_fet>:
+    305a:	a4 e6       	ldi	r26, 0x64	; 100
+    305c:	e0 91 ff 04 	lds	r30, 0x04FF
+    3060:	ef 30       	cpi	r30, 0x0F	; 15
+    3062:	21 f0       	breq	.+8      	; 0x306c <fet_old_box>
 
-00003066 <oldbox>:
-    3066:	1f b6       	in	r1, 0x3f	; 63
-    3068:	70 91 08 02 	lds	r23, 0x0208
-    306c:	75 30       	cpi	r23, 0x05	; 5
-    306e:	30 f5       	brcc	.+76     	; 0x30bc <Label_0x114e>
-    3070:	7a 95       	dec	r23
-    3072:	70 93 08 02 	sts	0x0208, r23
-    3076:	11 f1       	breq	.+68     	; 0x30bc <Label_0x114e>
-    3078:	72 30       	cpi	r23, 0x02	; 2
-    307a:	d1 f0       	breq	.+52     	; 0x30b0 <Label_0x1142>
-    307c:	24 f0       	brlt	.+8      	; 0x3086 <Label_0x1118>
-    307e:	70 91 05 02 	lds	r23, 0x0205
-    3082:	87 2d       	mov	r24, r7
-    3084:	03 c0       	rjmp	.+6      	; 0x308c <Label_0x111e>
+00003064 <set_fet>:
+    3064:	ac 83       	std	Y+4, r26	; 0x04
+    3066:	ad 83       	std	Y+5, r26	; 0x05
+    3068:	0c 94 0b 0a 	jmp	0x1416	; 0x1416 <__ctors_end+0x1416>
 
-00003086 <Label_0x1118>:
-    3086:	70 91 06 02 	lds	r23, 0x0206
-    308a:	8c 2d       	mov	r24, r12
+0000306c <fet_old_box>:
+    306c:	a0 91 53 00 	lds	r26, 0x0053
+    3070:	f9 cf       	rjmp	.-14     	; 0x3064 <set_fet>
 
-0000308c <Label_0x111e>:
-    308c:	33 24       	eor	r3, r3
-    308e:	98 e0       	ldi	r25, 0x08	; 8
-    3090:	86 95       	lsr	r24
+00003072 <replace_0x28>:
+    3072:	0c 94 3b 18 	jmp	0x3076	; 0x3076 <replacement_spi_transfer_complete>
 
-00003092 <Label_0x1124>:
-    3092:	08 f4       	brcc	.+2      	; 0x3096 <Label_0x1128>
-    3094:	37 0e       	add	r3, r23
+00003076 <replacement_spi_transfer_complete>:
+    3076:	70 91 ff 04 	lds	r23, 0x04FF
+    307a:	7f 30       	cpi	r23, 0x0F	; 15
+    307c:	11 f0       	breq	.+4      	; 0x3082 <oldbox>
+    307e:	0c 94 7c 08 	jmp	0x10f8	; 0x10f8 <__ctors_end+0x10f8>
 
-00003096 <Label_0x1128>:
-    3096:	37 94       	ror	r3
-    3098:	87 95       	ror	r24
-    309a:	9a 95       	dec	r25
-    309c:	d1 f7       	brne	.-12     	; 0x3092 <Label_0x1124>
-    309e:	98 e0       	ldi	r25, 0x08	; 8
-    30a0:	88 94       	clc
+00003082 <oldbox>:
+    3082:	1f b6       	in	r1, 0x3f	; 63
+    3084:	70 91 08 02 	lds	r23, 0x0208
+    3088:	75 30       	cpi	r23, 0x05	; 5
+    308a:	30 f5       	brcc	.+76     	; 0x30d8 <Label_0x114e>
+    308c:	7a 95       	dec	r23
+    308e:	70 93 08 02 	sts	0x0208, r23
+    3092:	11 f1       	breq	.+68     	; 0x30d8 <Label_0x114e>
+    3094:	72 30       	cpi	r23, 0x02	; 2
+    3096:	d1 f0       	breq	.+52     	; 0x30cc <Label_0x1142>
+    3098:	24 f0       	brlt	.+8      	; 0x30a2 <Label_0x1118>
+    309a:	70 91 05 02 	lds	r23, 0x0205
+    309e:	87 2d       	mov	r24, r7
+    30a0:	03 c0       	rjmp	.+6      	; 0x30a8 <Label_0x111e>
 
-000030a2 <Label_0x1134>:
-    30a2:	37 94       	ror	r3
-    30a4:	87 95       	ror	r24
-    30a6:	9a 95       	dec	r25
-    30a8:	e1 f7       	brne	.-8      	; 0x30a2 <Label_0x1134>
-    30aa:	80 95       	com	r24
-    30ac:	8f b9       	out	0x0f, r24	; 15
-    30ae:	07 c0       	rjmp	.+14     	; 0x30be <Label_0x1150>
+000030a2 <Label_0x1118>:
+    30a2:	70 91 06 02 	lds	r23, 0x0206
+    30a6:	8c 2d       	mov	r24, r12
 
-000030b0 <Label_0x1142>:
-    30b0:	94 9a       	sbi	0x12, 4	; 18
-    30b2:	00 00       	nop
-    30b4:	94 98       	cbi	0x12, 4	; 18
-    30b6:	7a e0       	ldi	r23, 0x0A	; 10
-    30b8:	7f b9       	out	0x0f, r23	; 15
-    30ba:	01 c0       	rjmp	.+2      	; 0x30be <Label_0x1150>
+000030a8 <Label_0x111e>:
+    30a8:	33 24       	eor	r3, r3
+    30aa:	98 e0       	ldi	r25, 0x08	; 8
+    30ac:	86 95       	lsr	r24
 
-000030bc <Label_0x114e>:
-    30bc:	94 9a       	sbi	0x12, 4	; 18
+000030ae <Label_0x1124>:
+    30ae:	08 f4       	brcc	.+2      	; 0x30b2 <Label_0x1128>
+    30b0:	37 0e       	add	r3, r23
 
-000030be <Label_0x1150>:
-    30be:	1f be       	out	0x3f, r1	; 63
-    30c0:	18 95       	reti
+000030b2 <Label_0x1128>:
+    30b2:	37 94       	ror	r3
+    30b4:	87 95       	ror	r24
+    30b6:	9a 95       	dec	r25
+    30b8:	d1 f7       	brne	.-12     	; 0x30ae <Label_0x1124>
+    30ba:	98 e0       	ldi	r25, 0x08	; 8
+    30bc:	88 94       	clc
 
-000030c2 <replace_0x1ce4>:
-    30c2:	46 30       	cpi	r20, 0x06	; 6
-    30c4:	30 33       	cpi	r19, 0x30	; 48
+000030be <Label_0x1134>:
+    30be:	37 94       	ror	r3
+    30c0:	87 95       	ror	r24
+    30c2:	9a 95       	dec	r25
+    30c4:	e1 f7       	brne	.-8      	; 0x30be <Label_0x1134>
+    30c6:	80 95       	com	r24
+    30c8:	8f b9       	out	0x0f, r24	; 15
+    30ca:	07 c0       	rjmp	.+14     	; 0x30da <Label_0x1150>
+
+000030cc <Label_0x1142>:
+    30cc:	94 9a       	sbi	0x12, 4	; 18
+    30ce:	00 00       	nop
+    30d0:	94 98       	cbi	0x12, 4	; 18
+    30d2:	7a e0       	ldi	r23, 0x0A	; 10
+    30d4:	7f b9       	out	0x0f, r23	; 15
+    30d6:	01 c0       	rjmp	.+2      	; 0x30da <Label_0x1150>
+
+000030d8 <Label_0x114e>:
+    30d8:	94 9a       	sbi	0x12, 4	; 18
+
+000030da <Label_0x1150>:
+    30da:	1f be       	out	0x3f, r1	; 63
+    30dc:	18 95       	reti
+
+000030de <replace_0x1ce4>:
+    30de:	46 30       	cpi	r20, 0x06	; 6
+    30e0:	30 33       	cpi	r19, 0x30	; 48
